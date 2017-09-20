@@ -12,12 +12,13 @@ uses
   LUX.GPU.OpenGL.Shaper,
   LUX.GPU.OpenGL.Matery,
   LUX.Motion.BVH,
-  LUX.Motion.BVH.OpenGL;
+  LUX.Motion.BVH.OpenGL, FMX.Media;
 
 type
   TForm1 = class(TForm)
     GLViewer1: TGLViewer;
     Timer1: TTimer;
+    MediaPlayer1: TMediaPlayer;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -25,10 +26,14 @@ type
     { private 宣言 }
   public
     { public 宣言 }
-    _Bones  :TBones;
-    _Scener :TGLScener;
-    _Camera :TGLCameraPers;
-    _Shaper :TGLBones;
+    _SkeletA :TBones;
+    _SkeletK :TBones;
+    _SkeletN :TBones;
+    _Scener  :TGLScener;
+    _Camera  :TGLCameraPers;
+    _ShaperA :TGLBones;
+    _ShaperK :TGLBones;
+    _ShaperN :TGLBones;
   end;
 
 var
@@ -42,26 +47,15 @@ uses System.Math;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-     _Bones := TBones.Create;
-
-     with _Bones do
-     begin
-          LoadFromFileBVH( '..\..\_DATA\aachan.bvh' );
-     end;
-
-     Timer1.Interval := Round( 1000 * _Bones.FrameT{sec} );
-
-     //////////
-
      _Scener := TGLScener.Create;
 
      _Camera := TGLCameraPers.Create( _Scener );
 
      with _Camera do
      begin
-          Pose := TSingleM4.RotateY( DegToRad( -180 ) )
+          Pose := TSingleM4.RotateY( DegToRad( -155 ) )
                 * TSingleM4.RotateX( DegToRad( -30 ) )
-                * TSingleM4.Translate( 0, 0, 500 );
+                * TSingleM4.Translate( 0, 50, 500 );
 
           Angl := DegToRad( 60{°} );
      end;
@@ -70,29 +64,60 @@ begin
 
      //////////
 
-     _Shaper := TGLBones.Create( _Scener );
+     _SkeletA := TBones.Create;
+     _SkeletK := TBones.Create;
+     _SkeletN := TBones.Create;
 
-     with _Shaper do
+     _SkeletA.LoadFromFileBVH( '..\..\_DATA\aachan.bvh' );
+     _SkeletK.LoadFromFileBVH( '..\..\_DATA\kashiyuka.bvh' );
+     _SkeletN.LoadFromFileBVH( '..\..\_DATA\nocchi.bvh' );
+
+     //////////
+
+     _ShaperA := TGLBones.Create( _Scener );
+     _ShaperK := TGLBones.Create( _Scener );
+     _ShaperN := TGLBones.Create( _Scener );
+
+     _ShaperA.Bones := _SkeletA;
+     _ShaperK.Bones := _SkeletK;
+     _ShaperN.Bones := _SkeletN;
+
+     //////////
+
+     Timer1.Enabled := True;
+
+     with MediaPlayer1 do
      begin
-          Bones  := _Bones;
-          FrameI := 0;
+          FileName := '..\..\_DATA\Perfume_globalsite_sound.wav';
+          Volume   := 0.5;
+
+          Play;
      end;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-     _Scener.DisposeOf;
-     _Bones .DisposeOf;
+     _Scener .DisposeOf;
+     _SkeletA.DisposeOf;
+     _SkeletK.DisposeOf;
+     _SkeletN.DisposeOf;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
+var
+   T :Single;
+   I :Integer;
 begin
-     with _Shaper do
-     begin
-          if FrameI < Bones.FrameN then FrameI := FrameI + 1;
-     end;
+     T{s} := MediaPlayer1.CurrentTime / MediaTimeScale;
+     I{f} := Round( T{s} / _SkeletA.FrameT{s/f} );
+
+     _ShaperA.FrameI := I;
+     _ShaperK.FrameI := I;
+     _ShaperN.FrameI := I;
 
      GLViewer1.Repaint;
+
+     Timer1.Enabled := ( MediaPlayer1.State = TMediaState.Playing );
 end;
 
 end. //######################################################################### ■
