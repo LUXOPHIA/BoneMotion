@@ -3,7 +3,7 @@
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Main in 'Main.pas' {Form2},
+  Main in 'Main.pas' {Form1},
   LUX.DN in '_LIBRARY\LUXOPHIA\LUX\LUX.DN.pas',
   LUX.Lattice.T1 in '_LIBRARY\LUXOPHIA\LUX\LUX.Lattice.T1.pas',
   LUX.Lattice.T2 in '_LIBRARY\LUXOPHIA\LUX\LUX.Lattice.T2.pas',
@@ -44,12 +44,13 @@ uses
   LUX.GPU.OpenGL.FMX in '_LIBRARY\LUXOPHIA\LUX.GPU.OpenGL\FMX\LUX.GPU.OpenGL.FMX.pas',
   LUX.GPU.OpenGL.Matery.FMX in '_LIBRARY\LUXOPHIA\LUX.GPU.OpenGL\FMX\LUX.GPU.OpenGL.Matery.FMX.pas',
   LUX.GPU.OpenGL.Viewer in '_LIBRARY\LUXOPHIA\LUX.GPU.OpenGL\FMX\LUX.GPU.OpenGL.Viewer.pas' {GLViewer: TFrame},
-  LUX.FMX.Forms in '_LIBRARY\LUXOPHIA\LUX\FMX\LUX.FMX.Forms.pas';
+  LUX.FMX.Forms in '_LIBRARY\LUXOPHIA\LUX\FMX\LUX.FMX.Forms.pas',
+  LUX.Motion.BVH in '_LIBRARY\LUXOPHIA\LUX.Motion.BVH.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

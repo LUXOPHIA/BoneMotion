@@ -1,4 +1,4 @@
-object Form2: TForm2
+object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'BoneMotion'
@@ -8,6 +8,8 @@ object Form2: TForm2
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   DesignerMasterStyle = 0
   inline GLViewer1: TGLViewer
     Align = Client
@@ -18,5 +20,11 @@ object Form2: TForm2
     Size.Width = 800.000000000000000000
     Size.Height = 600.000000000000000000
     Size.PlatformDefault = False
+  end
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 25
+    Top = 25
   end
 end
