@@ -358,7 +358,8 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="_LIBRARY\LUXOPHIA\LUX\FMX\LUX.FMX.Forms.pas"/>
-        <DCCReference Include="_LIBRARY\LUXOPHIA\LUX.Motion.BVH.pas"/>
+        <DCCReference Include="_LIBRARY\LUXOPHIA\LUX.Motion\LUX.Motion.BVH.pas"/>
+        <DCCReference Include="_LIBRARY\LUXOPHIA\LUX.Motion\LUX.Motion.BVH.OpenGL.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -408,14 +409,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\BoneMotion.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>BoneMotion.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

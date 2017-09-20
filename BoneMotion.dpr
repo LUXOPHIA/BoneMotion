@@ -45,7 +45,8 @@ uses
   LUX.GPU.OpenGL.Matery.FMX in '_LIBRARY\LUXOPHIA\LUX.GPU.OpenGL\FMX\LUX.GPU.OpenGL.Matery.FMX.pas',
   LUX.GPU.OpenGL.Viewer in '_LIBRARY\LUXOPHIA\LUX.GPU.OpenGL\FMX\LUX.GPU.OpenGL.Viewer.pas' {GLViewer: TFrame},
   LUX.FMX.Forms in '_LIBRARY\LUXOPHIA\LUX\FMX\LUX.FMX.Forms.pas',
-  LUX.Motion.BVH in '_LIBRARY\LUXOPHIA\LUX.Motion.BVH.pas';
+  LUX.Motion.BVH in '_LIBRARY\LUXOPHIA\LUX.Motion\LUX.Motion.BVH.pas',
+  LUX.Motion.BVH.OpenGL in '_LIBRARY\LUXOPHIA\LUX.Motion\LUX.Motion.BVH.OpenGL.pas';
 
 {$R *.res}
 

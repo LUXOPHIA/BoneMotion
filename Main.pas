@@ -11,7 +11,8 @@ uses
   LUX.GPU.OpenGL.Scener,
   LUX.GPU.OpenGL.Shaper,
   LUX.GPU.OpenGL.Matery,
-  LUX.Motion.BVH;
+  LUX.Motion.BVH,
+  LUX.Motion.BVH.OpenGL;
 
 type
   TForm1 = class(TForm)
@@ -43,34 +44,45 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
      _Bones := TBones.Create;
 
-     _Bones.LoadFromFileBVH( '..\..\_DATA\aachan.bvh' );
+     with _Bones do
+     begin
+          LoadFromFileBVH( '..\..\_DATA\aachan.bvh' );
+     end;
+
+     Timer1.Interval := Round( 1000 * _Bones.FrameT{sec} );
+
+     //////////
 
      _Scener := TGLScener.Create;
 
      _Camera := TGLCameraPers.Create( _Scener );
 
-     _Camera.Pose := TSingleM4.RotateY( DegToRad( -180 ) )
-                   * TSingleM4.RotateX( DegToRad( -30 ) )
-                   * TSingleM4.Translate( 0, 0, 500 );
+     with _Camera do
+     begin
+          Pose := TSingleM4.RotateY( DegToRad( -180 ) )
+                * TSingleM4.RotateX( DegToRad( -30 ) )
+                * TSingleM4.Translate( 0, 0, 500 );
 
-     _Camera.Angl := DegToRad( 60{°} );
+          Angl := DegToRad( 60{°} );
+     end;
 
      GLViewer1.Camera := _Camera;
 
+     //////////
+
      _Shaper := TGLBones.Create( _Scener );
 
-     _Shaper.Bones := _Bones;
-
-     Timer1.Interval := Round( _Bones.FrameT * 1000 );
-
-     _Shaper.FrameI := 0;
+     with _Shaper do
+     begin
+          Bones  := _Bones;
+          FrameI := 0;
+     end;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
      _Scener.DisposeOf;
-
-     _Bones.DisposeOf;
+     _Bones .DisposeOf;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
