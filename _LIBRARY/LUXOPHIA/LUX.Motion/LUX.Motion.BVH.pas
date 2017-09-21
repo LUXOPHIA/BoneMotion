@@ -52,6 +52,7 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        _Offs :TSingle3D;
        ///// アクセス
        function GetRelaPoses( const I_:Integer ) :TSingleM4; virtual;
+       function GetAbsoPoses( const I_:Integer ) :TSingleM4; virtual;
        ///// メソッド
        procedure SetFrameN( const FrameN_:Integer ); virtual;
        procedure AddMove( const I_:Integer; const Move_:TSingleM4 ); virtual;
@@ -62,6 +63,7 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        property Offs                          :TSingle3D read   _Offs     ;
        property     Poses[ const I_:Integer ] :TSingleM4 read GetRelaPoses;
        property RelaPoses[ const I_:Integer ] :TSingleM4 read GetRelaPoses;
+       property AbsoPoses[ const I_:Integer ] :TSingleM4 read GetAbsoPoses;
      end;
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TBoneJoin
@@ -89,6 +91,8 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      TBoneRoot = class( TBoneJoin )
      private
      protected
+       ///// アクセス
+       function GetAbsoPoses( const I_:Integer ) :TSingleM4; override;
      public
      end;
 
@@ -195,6 +199,11 @@ begin
      with _Offs do Result := TSingleM4.Translate( X, Y, Z );
 end;
 
+function TBoneNode.GetAbsoPoses( const I_:Integer ) :TSingleM4;
+begin
+     Result := Paren.AbsoPoses[ I_ ] * RelaPoses[ I_ ];
+end;
+
 /////////////////////////////////////////////////////////////////////// メソッド
 
 procedure TBoneNode.SetFrameN( const FrameN_:Integer );
@@ -277,6 +286,13 @@ end;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
+
+/////////////////////////////////////////////////////////////////////// アクセス
+
+function TBoneRoot.GetAbsoPoses( const I_:Integer ) :TSingleM4;
+begin
+     Result := RelaPoses[ I_ ];
+end;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
 
