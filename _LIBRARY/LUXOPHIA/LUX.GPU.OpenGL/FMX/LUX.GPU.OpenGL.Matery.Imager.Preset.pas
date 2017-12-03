@@ -1,4 +1,4 @@
-﻿unit LUX.GPU.OpenGL.Matery.FMX;
+﻿unit LUX.GPU.OpenGL.Matery.Imager.Preset;
 
 interface //#################################################################### ■
 
@@ -6,7 +6,7 @@ uses Winapi.OpenGL, Winapi.OpenGLext,
      LUX,
      LUX.GPU.OpenGL,
      LUX.GPU.OpenGL.Atom.Imager,
-     LUX.GPU.OpenGL.Atom.Imager.FMX,
+     LUX.GPU.OpenGL.Atom.Imager.Preset,
      LUX.GPU.OpenGL.Matery;
 
 type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【型】
@@ -27,14 +27,11 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        ///// プロパティ
        property Sample :TGLSample        read GetSample;
        property Imager :TGLImager2D_RGBA read GetImager;
-       ///// メソッド
-       procedure Use;
-       procedure Unuse;
      end;
 
      //-------------------------------------------------------------------------
 
-     TGLMateryImag = class( TGLMatery, IGLMateryImag )
+     TGLMateryImag = class( TGLMateryNorTex, IGLMateryImag )
      private
      protected
        _Sample :TGLSample;
@@ -55,7 +52,21 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryImagG
 
-     TGLMateryImagG = class( TGLMateryG, IGLMateryImag )
+     IGLMateryImagG = interface( IGLMatery )
+     ['{A3108C6C-0E37-467C-94DF-F99E30B528FA}']
+     {protected}
+       ///// アクセス
+       function GetSample :TGLSample;
+       function GetImager :TGLImager2D_RGBA;
+     {public}
+       ///// プロパティ
+       property Sample :TGLSample        read GetSample;
+       property Imager :TGLImager2D_RGBA read GetImager;
+     end;
+
+     //-------------------------------------------------------------------------
+
+     TGLMateryImagG = class( TGLMateryNorTexG, IGLMateryImagG )
      private
      protected
        _Sample :TGLSample;
@@ -110,8 +121,16 @@ constructor TGLMateryImag.Create;
 begin
      inherited;
 
-     _Sample  := TGLSample       .Create;
-     _Imager  := TGLImager2D_RGBA.Create;
+     with _Engine do
+     begin
+          with Imagers do
+          begin
+               Add( 0{BinP}, '_Imager'{Name} );
+          end;
+     end;
+
+     _Sample := TGLSample       .Create;
+     _Imager := TGLImager2D_RGBA.Create;
 end;
 
 destructor TGLMateryImag.Destroy;
@@ -164,8 +183,16 @@ constructor TGLMateryImagG.Create;
 begin
      inherited;
 
-     _Sample  := TGLSample       .Create;
-     _Imager  := TGLImager2D_RGBA.Create;
+     with _Engine do
+     begin
+          with Imagers do
+          begin
+               Add( 0{BinP}, '_Imager'{Name} );
+          end;
+     end;
+
+     _Sample := TGLSample       .Create;
+     _Imager := TGLImager2D_RGBA.Create;
 end;
 
 destructor TGLMateryImagG.Destroy;

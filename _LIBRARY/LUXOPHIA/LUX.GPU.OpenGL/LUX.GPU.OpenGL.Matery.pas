@@ -59,6 +59,42 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        procedure Unuse; virtual;
      end;
 
+     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNor
+
+     IGLMateryNor = interface( IGLMatery )
+     ['{ED6DC429-C600-4FDC-83CB-0EADFDDAEE99}']
+     {protected}
+     {public}
+     end;
+
+     //-------------------------------------------------------------------------
+
+     TGLMateryNor = class( TGLMatery, IGLMateryNor )
+     private
+     protected
+     public
+       constructor Create;
+       destructor Destroy; override;
+     end;
+
+     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNorTex
+
+     IGLMateryNorTex = interface( IGLMateryNor )
+     ['{DB8D6DAD-059F-45D5-BF48-7AEFFD2E7A71}']
+     {protected}
+     {public}
+     end;
+
+     //-------------------------------------------------------------------------
+
+     TGLMateryNorTex = class( TGLMateryNor, IGLMateryNorTex )
+     private
+     protected
+     public
+       constructor Create;
+       destructor Destroy; override;
+     end;
+
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryG
 
      IGLMateryG = interface( IGLMatery )
@@ -86,42 +122,31 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        property ShaderG :TGLShaderG read GetShaderG;
      end;
 
-     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryColor
+     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNorTexG
 
-     TGLMateryColor = class( TGLMatery )
-     private
-     protected
-       _Color :TGLUnifor<TAlphaColorF>;
+     IGLMateryNorTexG = interface( IGLMateryNorTex )
+     ['{ED414C59-0A0B-493C-B497-A7D18A1487F4}']
+     {protected}
        ///// アクセス
-       function GetColor :TAlphaColorF;
-       procedure SetColor( const Color_:TAlphaColorF );
-     public
-       constructor Create;
-       destructor Destroy; override;
+       function GetShaderG :TGLShaderG;
+     {public}
        ///// プロパティ
-       property Color :TAlphaColorF read GetColor write SetColor;
-       ///// メソッド
-       procedure Use; override;
-       procedure Unuse; override;
+       property ShaderG :TGLShaderG read GetShaderG;
      end;
 
-     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryRGB
+     //-------------------------------------------------------------------------
 
-     TGLMateryRGB = class( TGLMatery )
+     TGLMateryNorTexG = class( TGLMateryNorTex, IGLMateryNorTexG )
      private
      protected
-       _Ambient :TGLUnifor<TAlphaColorF>;
+       _ShaderG :TGLShaderG;
        ///// アクセス
-       function GetAmbient :TAlphaColorF;
-       procedure SetAmbient( const Ambient_:TAlphaColorF );
+       function GetShaderG :TGLShaderG;
      public
        constructor Create;
        destructor Destroy; override;
        ///// プロパティ
-       property Ambient :TAlphaColorF read GetAmbient write SetAmbient;
-       ///// メソッド
-       procedure Use; override;
-       procedure Unuse; override;
+       property ShaderG :TGLShaderG read GetShaderG;
      end;
 
 //const //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【定数】
@@ -184,22 +209,15 @@ begin
                  Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
 
                  Add( 'in vec4 _SenderPos;' );
-                 Add( 'in vec4 _SenderNor;' );
-                 Add( 'in vec2 _SenderTex;' );
-
                  Add( 'out TSenderVF' );
                  Add( '{' );
                  Add( '  vec4 Pos;' );
-                 Add( '  vec4 Nor;' );
-                 Add( '  vec2 Tex;' );
                  Add( '}' );
                  Add( '_Result;' );
 
                  Add( 'void main()' );
                  Add( '{' );
                  Add( '  _Result.Pos =                     _ShaperPose     * _SenderPos;' );
-                 Add( '  _Result.Nor = transpose( inverse( _ShaperPose ) ) * _SenderNor;' );
-                 Add( '  _Result.Tex =                                       _SenderTex;' );
                  Add( '  gl_Position = _ViewerScal * _CameraProj * inverse( _CameraPose ) * _Result.Pos;' );
                  Add( '}' );
 
@@ -217,8 +235,6 @@ begin
           with Verters do
           begin
                Add( 0{BinP}, '_SenderPos'{Name}, 3{EleN}, GL_FLOAT{EleT} );
-               Add( 1{BinP}, '_SenderNor'{Name}, 3{EleN}, GL_FLOAT{EleT} );
-               Add( 2{BinP}, '_SenderTex'{Name}, 2{EleN}, GL_FLOAT{EleT} );
           end;
 
           with Unifors do
@@ -227,11 +243,6 @@ begin
                Add( 1{BinP}, 'TCameraProj'{Name} );
                Add( 2{BinP}, 'TCameraPose'{Name} );
                Add( 3{BinP}, 'TShaperPose'{Name} );
-          end;
-
-          with Imagers do
-          begin
-               Add( 0{BinP}, '_Imager'{Name} );
           end;
 
           with Framers do
@@ -262,194 +273,17 @@ begin
      _Engine.Unuse;
 end;
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryG
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNor
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
 
-/////////////////////////////////////////////////////////////////////// アクセス
-
-function TGLMateryG.GetShaderG :TGLShaderG;
-begin
-     Result := _ShaderG;
-end;
-
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
 
-constructor TGLMateryG.Create;
+constructor TGLMateryNor.Create;
 begin
      inherited;
-
-     _ShaderG := TGLShaderG.Create;
-
-     with _Engine do
-     begin
-          Attach( _ShaderG{Shad} );
-     end;
-end;
-
-destructor TGLMateryG.Destroy;
-begin
-     _ShaderG.DisposeOf;
-
-     inherited;
-end;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryColor
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// アクセス
-
-function TGLMateryColor.GetColor :TAlphaColorF;
-begin
-     Result := _Color[ 0 ];
-end;
-
-procedure TGLMateryColor.SetColor( const Color_:TAlphaColorF );
-begin
-     _Color[ 0 ] := Color_;
-end;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLMateryColor.Create;
-begin
-     inherited;
-
-     _Color := TGLUnifor<TAlphaColorF>.Create( GL_STATIC_DRAW );
-     _Color.Count := 1;
-
-     with _ShaderV do
-     begin
-          with Source do
-          begin
-               BeginUpdate;
-                 Clear;
-
-                 Add( '#version 430' );
-
-                 Add( 'layout( std140 ) uniform TViewerScal{ layout( row_major ) mat4 _ViewerScal; };' );
-                 Add( 'layout( std140 ) uniform TCameraProj{ layout( row_major ) mat4 _CameraProj; };' );
-                 Add( 'layout( std140 ) uniform TCameraPose{ layout( row_major ) mat4 _CameraPose; };' );
-                 Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
-
-                 Add( 'in vec4 _SenderPos;' );
-
-                 Add( 'out TSenderVF' );
-                 Add( '{' );
-                 Add( '  vec4 Pos;' );
-                 Add( '}' );
-                 Add( '_Result;' );
-
-                 Add( 'void main()' );
-                 Add( '{' );
-                 Add( '  _Result.Pos = _ShaperPose * _SenderPos;' );
-                 Add( '  gl_Position = _ViewerScal * _CameraProj * inverse( _CameraPose ) * _Result.Pos;' );
-                 Add( '}' );
-
-               EndUpdate;
-          end;
-
-          Assert( Status, Errors.Text );
-     end;
-
-     with _ShaderF do
-     begin
-          with Source do
-          begin
-               BeginUpdate;
-                 Clear;
-
-                 Add( '#version 430' );
-
-                 Add( 'layout( std140 ) uniform TMateryCol{ vec4 _MateryCol; };' );
-
-                 Add( 'in TSenderVF' );
-                 Add( '{' );
-                 Add( '  vec4 Pos;' );
-                 Add( '}' );
-                 Add( '_Sender;' );
-
-                 Add( 'out vec4 _ResultCol;' );
-
-                 Add( 'void main(){ _ResultCol = _MateryCol; }' );
-
-               EndUpdate;
-          end;
-
-          Assert( Status, Errors.Text );
-     end;
-
-     with _Engine do
-     begin
-          with Verters do
-          begin
-               Del( 1{BinP} );
-               Del( 2{BinP} );
-          end;
-
-          with Unifors do
-          begin
-               Add( 4{BinP}, 'TMateryCol'{Name} );
-          end;
-     end;
-
-     Color := TAlphaColorF.Create( 1, 0, 0, 1 );
-end;
-
-destructor TGLMateryColor.Destroy;
-begin
-     _Color.DisposeOf;
-
-     inherited;
-end;
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLMateryColor.Use;
-begin
-     inherited;
-
-     _Color.Use( 4 );
-end;
-
-procedure TGLMateryColor.Unuse;
-begin
-     _Color.Unuse( 4 );
-
-     inherited;
-end;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryRGB
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// アクセス
-
-function TGLMateryRGB.GetAmbient :TAlphaColorF;
-begin
-     Result := _Ambient[ 0 ];
-end;
-
-procedure TGLMateryRGB.SetAmbient( const Ambient_:TAlphaColorF );
-begin
-     _Ambient[ 0 ] := Ambient_;
-end;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLMateryRGB.Create;
-begin
-     inherited;
-
-     _Ambient := TGLUnifor<TAlphaColorF>.Create( GL_STATIC_DRAW );
-     _Ambient.Count := 1;
 
      with _ShaderV do
      begin
@@ -488,7 +322,34 @@ begin
           Assert( Status, Errors.Text );
      end;
 
-     with _ShaderF do
+     with _Engine do
+     begin
+          with Verters do
+          begin
+               Add( 1{BinP}, '_SenderNor'{Name}, 3{EleN}, GL_FLOAT{EleT} );
+          end;
+     end;
+end;
+
+destructor TGLMateryNor.Destroy;
+begin
+
+     inherited;
+end;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNorTex
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
+
+constructor TGLMateryNorTex.Create;
+begin
+     inherited;
+
+     with _ShaderV do
      begin
           with Source do
           begin
@@ -497,20 +358,29 @@ begin
 
                  Add( '#version 430' );
 
-                 Add( 'layout( std140 ) uniform TAmbient{ vec4 _Ambient; };' );
+                 Add( 'layout( std140 ) uniform TViewerScal{ layout( row_major ) mat4 _ViewerScal; };' );
+                 Add( 'layout( std140 ) uniform TCameraProj{ layout( row_major ) mat4 _CameraProj; };' );
+                 Add( 'layout( std140 ) uniform TCameraPose{ layout( row_major ) mat4 _CameraPose; };' );
+                 Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
 
-                 Add( 'in TSenderVF' );
+                 Add( 'in vec4 _SenderPos;' );
+                 Add( 'in vec4 _SenderNor;' );
+                 Add( 'in vec2 _SenderTex;' );
+
+                 Add( 'out TSenderVF' );
                  Add( '{' );
                  Add( '  vec4 Pos;' );
                  Add( '  vec4 Nor;' );
+                 Add( '  vec2 Tex;' );
                  Add( '}' );
-                 Add( '_Sender;' );
-
-                 Add( 'out vec4 _ResultCol;' );
+                 Add( '_Result;' );
 
                  Add( 'void main()' );
                  Add( '{' );
-                 Add( '  _ResultCol = vec4( _Ambient.rgb + ( 1 + normalize( _Sender.Nor.xyz ) ) / 2, 1 );' );
+                 Add( '  _Result.Pos =                     _ShaperPose     * _SenderPos;' );
+                 Add( '  _Result.Nor = transpose( inverse( _ShaperPose ) ) * _SenderNor;' );
+                 Add( '  _Result.Tex =                                       _SenderTex;' );
+                 Add( '  gl_Position = _ViewerScal * _CameraProj * inverse( _CameraPose ) * _Result.Pos;' );
                  Add( '}' );
 
                EndUpdate;
@@ -523,37 +393,225 @@ begin
      begin
           with Verters do
           begin
-               Del( 2{BinP} );
-          end;
-
-          with Unifors do
-          begin
-               Add( 4{BinP}, 'TAmbient'{Name} );
+               Add( 2{BinP}, '_SenderTex'{Name}, 2{EleN}, GL_FLOAT{EleT} );
           end;
      end;
-
-     Ambient := TAlphaColorF.Create( 0, 0, 0 );
 end;
 
-destructor TGLMateryRGB.Destroy;
+destructor TGLMateryNorTex.Destroy;
+begin
+
+     inherited;
+end;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryG
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
+
+/////////////////////////////////////////////////////////////////////// アクセス
+
+function TGLMateryG.GetShaderG :TGLShaderG;
+begin
+     Result := _ShaderG;
+end;
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
+
+constructor TGLMateryG.Create;
 begin
      inherited;
 
-     _Ambient.DisposeOf;
+     _ShaderG := TGLShaderG.Create;
+
+     with _Engine do
+     begin
+          Attach( _ShaderG{Shad} );
+     end;
+
+     with _ShaderV do
+     begin
+          with Source do
+          begin
+               BeginUpdate;
+                 Clear;
+
+                 Add( '#version 430' );
+
+                 Add( 'layout( std140 ) uniform TViewerScal{ layout( row_major ) mat4 _ViewerScal; };' );
+                 Add( 'layout( std140 ) uniform TCameraProj{ layout( row_major ) mat4 _CameraProj; };' );
+                 Add( 'layout( std140 ) uniform TCameraPose{ layout( row_major ) mat4 _CameraPose; };' );
+                 Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
+
+                 Add( 'in vec4 _SenderPos;' );
+
+                 Add( 'out TSenderVG' );
+                 Add( '{' );
+                 Add( '  vec4 Pos;' );
+                 Add( '}' );
+                 Add( '_Result;' );
+
+                 Add( 'void main()' );
+                 Add( '{' );
+                 Add( '  _Result.Pos = _ShaperPose * _SenderPos;' );
+                 Add( '}' );
+
+               EndUpdate;
+          end;
+
+          Assert( Status, Errors.Text );
+     end;
+
+     with _ShaderG do
+     begin
+          with Source do
+          begin
+               BeginUpdate;
+                 Clear;
+
+                 Add( '#version 430' );
+
+                 Add( 'vec4 FaceNorm( vec4 P1_, vec4 P2_, vec4 P3_ )' );
+                 Add( '{' );
+                 Add( '  return vec4( cross( P2_.xyz - P1_.xyz, P3_.xyz - P1_.xyz ), 0 );' );
+                 Add( '}' );
+
+                 Add( 'layout( std140 ) uniform TViewerScal{ layout( row_major ) mat4 _ViewerScal; };' );
+                 Add( 'layout( std140 ) uniform TCameraProj{ layout( row_major ) mat4 _CameraProj; };' );
+                 Add( 'layout( std140 ) uniform TCameraPose{ layout( row_major ) mat4 _CameraPose; };' );
+                 Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
+
+                 Add( 'layout( triangles ) in;' );
+                 Add( 'in TSenderVG' );
+                 Add( '{' );
+                 Add( '  vec4 Pos;' );
+                 Add( '}' );
+                 Add( '_Sender[ 3 ];' );
+
+                 Add( 'layout( triangle_strip, max_vertices = 3 ) out;' );
+                 Add( 'out TSenderGF' );
+                 Add( '{' );
+                 Add( '  vec4 Pos;' );
+                 Add( '  vec4 Nor;' );
+                 Add( '}' );
+                 Add( '_Result;' );
+                 Add( 'struct TPoin' );
+                 Add( '{' );
+                 Add( '  vec4 Pos;' );
+                 Add( '  vec4 Nor;' );
+                 Add( '};' );
+
+                 Add( 'void AddPoin( TPoin Poin_ )' );
+                 Add( '{' );
+                 Add( '  _Result.Pos = Poin_.Pos;' );
+                 Add( '  _Result.Nor = Poin_.Nor;' );
+                 Add( '  gl_Position = _ViewerScal * _CameraProj * inverse( _CameraPose ) * _Result.Pos;' );
+                 Add( '  EmitVertex();' );
+                 Add( '}' );
+
+                 Add( 'void AddFace( TPoin P1_, TPoin P2_, TPoin P3_ )' );
+                 Add( '{' );
+                 Add( '  AddPoin( P1_ );' );
+                 Add( '  AddPoin( P2_ );' );
+                 Add( '  AddPoin( P3_ );' );
+                 Add( '  EndPrimitive();' );
+                 Add( '}' );
+
+                 Add( 'void main()' );
+                 Add( '{' );
+                 Add( '  vec4 N = FaceNorm( _Sender[ 0 ].Pos,' );
+                 Add( '                     _Sender[ 1 ].Pos,' );
+                 Add( '                     _Sender[ 2 ].Pos );' );
+                 Add( '  TPoin P1 = TPoin( _Sender[ 0 ].Pos, N );' );
+                 Add( '  TPoin P2 = TPoin( _Sender[ 1 ].Pos, N );' );
+                 Add( '  TPoin P3 = TPoin( _Sender[ 2 ].Pos, N );' );
+                 Add( '  AddFace( P1, P2, P3 );' );
+                 Add( '}' );
+
+               EndUpdate;
+          end;
+
+          Assert( Status, Errors.Text );
+     end;
+
+     with _ShaderF do
+     begin
+          with Source do
+          begin
+               BeginUpdate;
+                 Clear;
+
+                 Add( '#version 430' );
+
+                 Add( 'layout( std140 ) uniform TViewerScal{ layout( row_major ) mat4 _ViewerScal; };' );
+                 Add( 'layout( std140 ) uniform TCameraProj{ layout( row_major ) mat4 _CameraProj; };' );
+                 Add( 'layout( std140 ) uniform TCameraPose{ layout( row_major ) mat4 _CameraPose; };' );
+                 Add( 'layout( std140 ) uniform TShaperPose{ layout( row_major ) mat4 _ShaperPose; };' );
+
+                 Add( 'in TSenderGF' );
+                 Add( '{' );
+                 Add( '  vec4 Pos;' );
+                 Add( '  vec4 Nor;' );
+                 Add( '}' );
+                 Add( '_Sender;' );
+
+                 Add( 'out vec4 _ResultCol;' );
+
+                 Add( 'void main()' );
+                 Add( '{' );
+                 Add( '  _ResultCol = vec4( normalize( _Sender.Nor.xyz ) / 2 + 0.5, 1 );' );
+                 Add( '}' );
+
+               EndUpdate;
+          end;
+
+          Assert( Status, Errors.Text );
+     end;
+
+     with _Engine do
+     begin
+          Assert( Status, Errors.Text );
+     end;
 end;
 
-/////////////////////////////////////////////////////////////////////// メソッド
+destructor TGLMateryG.Destroy;
+begin
+     _ShaderG.DisposeOf;
 
-procedure TGLMateryRGB.Use;
+     inherited;
+end;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLMateryNorTexG
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
+
+/////////////////////////////////////////////////////////////////////// アクセス
+
+function TGLMateryNorTexG.GetShaderG :TGLShaderG;
+begin
+     Result := _ShaderG;
+end;
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
+
+constructor TGLMateryNorTexG.Create;
 begin
      inherited;
 
-     _Ambient.Use( 4 );
+     _ShaderG := TGLShaderG.Create;
+
+     with _Engine do
+     begin
+          Attach( _ShaderG{Shad} );
+     end;
 end;
 
-procedure TGLMateryRGB.Unuse;
+destructor TGLMateryNorTexG.Destroy;
 begin
-     _Ambient.Unuse( 4 );
+     _ShaderG.DisposeOf;
 
      inherited;
 end;

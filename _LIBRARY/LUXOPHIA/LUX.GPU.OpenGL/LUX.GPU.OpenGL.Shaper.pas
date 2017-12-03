@@ -4,7 +4,7 @@ interface //####################################################################
 
 uses System.UITypes,
      Winapi.OpenGL, Winapi.OpenGLext,
-     LUX, LUX.D2, LUX.D3, LUX.M4, LUX.Tree,
+     LUX, LUX.D2, LUX.D3, LUX.M4,
      LUX.GPU.OpenGL,
      LUX.GPU.OpenGL.Atom.Buffer,
      LUX.GPU.OpenGL.Atom.Buffer.Verter,
@@ -14,12 +14,10 @@ uses System.UITypes,
 
 type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【型】
 
-     TGLShaper         = class;
-     TGLShaperPoin     = class;
-     TGLShaperLine     = class;
-     TGLShaperFace     = class;
-     TGLShaperCopy     = class;
-     TGLShaperLineCube = class;
+     TGLShaper     = class;
+     TGLShaperPoin = class;
+     TGLShaperLine = class;
+     TGLShaperFace = class;
 
      //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【レコード】
 
@@ -31,14 +29,14 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      private
      protected
        _Matery :IGLMatery;
-       ///// メソッド
-       procedure BeginDraw; override;
-       procedure EndDraw; override;
      public
        constructor Create; override;
        destructor Destroy; override;
        ///// プロパティ
        property Matery :IGLMatery read _Matery write _Matery;
+       ///// メソッド
+       procedure BeginDraw; override;
+       procedure EndDraw; override;
      end;
 
      //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperPoin
@@ -49,10 +47,6 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        _PosBuf :TGLVerterS<TSingle3D>;
        _NorBuf :TGLVerterS<TSingle3D>;
        _TexBuf :TGLVerterS<TSingle2D>;
-       ///// メソッド
-       procedure BeginDraw; override;
-       procedure DrawMain; override;
-       procedure EndDraw; override;
      public
        constructor Create; override;
        destructor Destroy; override;
@@ -61,6 +55,9 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        property NorBuf :TGLVerterS<TSingle3D> read _NorBuf;
        property TexBuf :TGLVerterS<TSingle2D> read _TexBuf;
        ///// メソッド
+       procedure BeginDraw; override;
+       procedure DrawMain; override;
+       procedure EndDraw; override;
        procedure CalcBouBox; override;
        procedure LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle3D>; const DivU_,DivV_:Integer ); virtual;
        procedure LoadFromFileSTL( const FileName_:String );
@@ -74,10 +71,6 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      protected
        _EleBuf :TGLElemerLine32;
        _LineW  :Single;
-       ///// メソッド
-       procedure BeginDraw; override;
-       procedure DrawMain; override;
-       procedure EndDraw; override;
      public
        constructor Create; override;
        destructor Destroy; override;
@@ -85,6 +78,9 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
        property EleBuf :TGLElemerLine32 read _EleBuf             ;
        property LineW  :Single          read _LineW  write _LineW;
        ///// メソッド
+       procedure BeginDraw; override;
+       procedure DrawMain; override;
+       procedure EndDraw; override;
        procedure LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle3D>; const DivU_,DivV_:Integer ); override;
        procedure LoadFromFileSTL( const FileName_:String );
        procedure LoadFromFileOBJ( const FileName_:String );
@@ -96,68 +92,16 @@ type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      private
      protected
        _EleBuf :TGLElemerFace32;
-       ///// メソッド
-       procedure DrawMain; override;
      public
        constructor Create; override;
        destructor Destroy; override;
        ///// プロパティ
        property EleBuf :TGLElemerFace32 read _EleBuf;
        ///// メソッド
+       procedure DrawMain; override;
        procedure LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle3D>; const DivU_,DivV_:Integer ); override;
        procedure LoadFromFileSTL( const FileName_:String );
        procedure LoadFromFileOBJ( const FileName_:String );
-     end;
-
-     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperCopy
-
-     TGLShaperCopy = class( TGLShaper )
-     private
-     protected
-       _Shaper :TGLShaperPoin;
-       ///// アクセス
-       function GetShaper :TGLShaperPoin;
-       procedure SetShaper( const Shaper_:TGLShaperPoin );
-       ///// メソッド
-       procedure BeginDraw; override;
-       procedure DrawMain; override;
-       procedure EndDraw; override;
-     public
-       constructor Create; override;
-       destructor Destroy; override;
-       ///// プロパティ
-       property Shaper :TGLShaperPoin read GetShaper write SetShaper;
-       ///// メソッド
-       procedure CalcBouBox; override;
-     end;
-
-     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperLineCube
-
-     TGLShaperLineCube = class( TGLShaperLine )
-     private
-       ///// メソッド
-       procedure MakeModel;
-     protected
-       _SizeX :Single;
-       _SizeY :Single;
-       _SizeZ :Single;
-       ///// アクセス
-       function GetSizeX :Single;
-       procedure SetSizeX( const SizeX_:Single );
-       function GetSizeY :Single;
-       procedure SetSizeY( const SizeY_:Single );
-       function GetSizeZ :Single;
-       procedure SetSizeZ( const SizeZ_:Single );
-       function GetColor :TAlphaColorF;
-       procedure SetColor( const Color_:TAlphaColorF );
-     public
-       constructor Create; override;
-       destructor Destroy; override;
-       ///// プロパティ
-       property SizeX :Single       read GetSizeX write SetSizeX;
-       property SizeY :Single       read GetSizeY write SetSizeY;
-       property SizeZ :Single       read GetSizeZ write SetSizeZ;
-       property Color :TAlphaColorF read GetColor write SetColor;
      end;
 
 //const //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【定数】
@@ -180,6 +124,21 @@ uses System.SysUtils, System.Classes, System.RegularExpressions, System.Generics
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
 
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
+
+constructor TGLShaper.Create;
+begin
+     inherited;
+
+     _HitTest := True;
+end;
+
+destructor TGLShaper.Destroy;
+begin
+
+     inherited;
+end;
+
 /////////////////////////////////////////////////////////////////////// メソッド
 
 procedure TGLShaper.BeginDraw;
@@ -196,26 +155,31 @@ begin
      inherited;
 end;
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLShaper.Create;
-begin
-     inherited;
-
-     _HitTest := True;
-end;
-
-destructor TGLShaper.Destroy;
-begin
-
-     inherited;
-end;
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperPoin
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
+
+constructor TGLShaperPoin.Create;
+begin
+     inherited;
+
+     _PosBuf := TGLVerterS<TSingle3D>.Create( GL_STATIC_DRAW );
+     _NorBuf := TGLVerterS<TSingle3D>.Create( GL_STATIC_DRAW );
+     _TexBuf := TGLVerterS<TSingle2D>.Create( GL_STATIC_DRAW );
+end;
+
+destructor TGLShaperPoin.Destroy;
+begin
+     _PosBuf.DisposeOf;
+     _NorBuf.DisposeOf;
+     _TexBuf.DisposeOf;
+
+     inherited;
+end;
 
 /////////////////////////////////////////////////////////////////////// メソッド
 
@@ -242,31 +206,10 @@ begin
      inherited;
 end;
 
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLShaperPoin.Create;
-begin
-     inherited;
-
-     _PosBuf := TGLVerterS<TSingle3D>.Create( GL_STATIC_DRAW );
-     _NorBuf := TGLVerterS<TSingle3D>.Create( GL_STATIC_DRAW );
-     _TexBuf := TGLVerterS<TSingle2D>.Create( GL_STATIC_DRAW );
-end;
-
-destructor TGLShaperPoin.Destroy;
-begin
-     _PosBuf.DisposeOf;
-     _NorBuf.DisposeOf;
-     _TexBuf.DisposeOf;
-
-     inherited;
-end;
-
-/////////////////////////////////////////////////////////////////////// メソッド
+//------------------------------------------------------------------------------
 
 procedure TGLShaperPoin.CalcBouBox;
 var
-   P :TGLBufferData<TSingle3D>;
    B :TSingleArea3D;
    I :Integer;
 begin
@@ -276,11 +219,9 @@ begin
 
      with _PosBuf do
      begin
-          P := Map( GL_READ_ONLY );
-
           for I := 0 to Count-1 do
           begin
-               with P[ I ] do
+               with _PosBuf[ I ] do
                begin
                     if X < B.Min.X then B.Min.X := X
                                    else
@@ -295,8 +236,6 @@ begin
                     if B.Max.Z < Z then B.Max.Z := Z;
                end;
           end;
-
-          Unmap;
      end;
 
      _Inform.BouBox := B;
@@ -313,8 +252,6 @@ procedure TGLShaperPoin.LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle
 //··································
 var
    C, X, Y, I :Integer;
-   Ps, Ns :TGLBufferData<TSingle3D>;
-   Ts :TGLBufferData<TSingle2D>;
    T :TSingle2D;
    M :TSingleM4;
 begin
@@ -323,10 +260,6 @@ begin
      _PosBuf.Count := C;
      _NorBuf.Count := C;
      _TexBuf.Count := C;
-
-     Ps := _PosBuf.Map( GL_WRITE_ONLY );
-     Ns := _NorBuf.Map( GL_WRITE_ONLY );
-     Ts := _TexBuf.Map( GL_WRITE_ONLY );
 
      for Y := 0 to DivV_ do
      begin
@@ -337,18 +270,14 @@ begin
 
                I := XYtoI( X, Y );
 
-               Ts[ I ] := T;
+               _TexBuf[ I ] := T;
 
                M := Tensor( T, Func_ );
 
-               Ps[ I ] := M.AxisP;
-               Ns[ I ] := M.AxisZ;
+               _PosBuf[ I ] := M.AxisP;
+               _NorBuf[ I ] := M.AxisZ;
           end;
      end;
-
-     _PosBuf.Unmap;
-     _NorBuf.Unmap;
-     _TexBuf.Unmap;
 
      CalcBouBox;
 end;
@@ -368,7 +297,6 @@ var
                   _    :Word;
                 end;
    E :TCardinal3D;
-   Ps, Ns :TGLBufferData<TSingle3D>;
 begin
      F := TFileStream.Create( FileName_, fmOpenRead );
      try
@@ -386,9 +314,6 @@ begin
      _PosBuf.Count := 3 * FsN;
      _NorBuf.Count := 3 * FsN;
 
-     Ps := _PosBuf.Map( GL_WRITE_ONLY );
-     Ns := _NorBuf.Map( GL_WRITE_ONLY );
-
      E.X := 0;
      E.Y := 1;
      E.Z := 2;
@@ -396,22 +321,19 @@ begin
      begin
           with Fs[ I ] do
           begin
-               Ps.Items[ E.X ] := Pos1;
-               Ps.Items[ E.Y ] := Pos2;
-               Ps.Items[ E.Z ] := Pos3;
+               _PosBuf[ E.X ] := Pos1;
+               _PosBuf[ E.Y ] := Pos2;
+               _PosBuf[ E.Z ] := Pos3;
 
-               Ns.Items[ E.X ] := Nor;
-               Ns.Items[ E.Y ] := Nor;
-               Ns.Items[ E.Z ] := Nor;
+               _NorBuf[ E.X ] := Nor;
+               _NorBuf[ E.Y ] := Nor;
+               _NorBuf[ E.Z ] := Nor;
           end;
 
           Inc( E.X, 3 );
           Inc( E.Y, 3 );
           Inc( E.Z, 3 );
      end;
-
-     _PosBuf.Unmap;
-     _NorBuf.Unmap;
 
      CalcBouBox;
 end;
@@ -530,12 +452,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
           end;
      end;
 
@@ -545,12 +462,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
           end;
      end;
 
@@ -560,12 +472,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
           end;
      end;
 
@@ -579,26 +486,6 @@ end;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLShaperLine.BeginDraw;
-begin
-     inherited;
-
-     glLineWidth( _LineW );
-end;
-
-procedure TGLShaperLine.DrawMain;
-begin
-     _EleBuf.Draw;
-end;
-
-procedure TGLShaperLine.EndDraw;
-begin
-
-     inherited;
-end;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
 
@@ -620,6 +507,26 @@ end;
 
 /////////////////////////////////////////////////////////////////////// メソッド
 
+procedure TGLShaperLine.BeginDraw;
+begin
+     inherited;
+
+     glLineWidth( _LineW );
+end;
+
+procedure TGLShaperLine.DrawMain;
+begin
+     _EleBuf.Draw;
+end;
+
+procedure TGLShaperLine.EndDraw;
+begin
+
+     inherited;
+end;
+
+//------------------------------------------------------------------------------
+
 procedure TGLShaperLine.LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle3D>; const DivU_,DivV_:Integer );
 //··································
      function XYtoI( const X_,Y_:Integer ) :Integer;
@@ -629,13 +536,10 @@ procedure TGLShaperLine.LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle
 //··································
 var
    X, Y, I, I0, I1 :Integer;
-   Es :TGLBufferData<TCardinal2D>;
 begin
      inherited;
 
      _EleBuf.Count := DivV_ * ( DivU_+1 ) + ( DivV_+1 ) * DivU_;
-
-     Es := _EleBuf.Map( GL_WRITE_ONLY );
 
      I := 0;
 
@@ -646,7 +550,7 @@ begin
                I0 := XYtoI( X+0, Y );
                I1 := XYtoI( X+1, Y );
 
-               Es[ I ] := TCardinal2D.Create( I0, I1 );  Inc( I );
+               _EleBuf[ I ] := TCardinal2D.Create( I0, I1 );  Inc( I );
           end;
      end;
 
@@ -657,11 +561,9 @@ begin
                I0 := XYtoI( X, Y+0 );
                I1 := XYtoI( X, Y+1 );
 
-               Es[ I ] := TCardinal2D.Create( I0, I1 );  Inc( I );
+               _EleBuf[ I ] := TCardinal2D.Create( I0, I1 );  Inc( I );
           end;
      end;
-
-     _EleBuf.Unmap;
 end;
 
 //------------------------------------------------------------------------------
@@ -679,8 +581,6 @@ var
                   _    :Word;
                 end;
    E :TCardinal3D;
-   Ps, Ns :TGLBufferData<TSingle3D>;
-   Es :TGLBufferData<TCardinal2D>;
 begin
      F := TFileStream.Create( FileName_, fmOpenRead );
      try
@@ -699,10 +599,6 @@ begin
      _NorBuf.Count := 3 * FsN;
      _EleBuf.Count := 3 * FsN;
 
-     Ps := _PosBuf.Map( GL_WRITE_ONLY );
-     Ns := _NorBuf.Map( GL_WRITE_ONLY );
-     Es := _EleBuf.Map( GL_WRITE_ONLY );
-
      E.X := 0;
      E.Y := 1;
      E.Z := 2;
@@ -710,27 +606,23 @@ begin
      begin
           with Fs[ I ] do
           begin
-               Ps.Items[ E.X ] := Pos1;
-               Ps.Items[ E.Y ] := Pos2;
-               Ps.Items[ E.Z ] := Pos3;
+               _PosBuf[ E.X ] := Pos1;
+               _PosBuf[ E.Y ] := Pos2;
+               _PosBuf[ E.Z ] := Pos3;
 
-               Ns.Items[ E.X ] := Nor;
-               Ns.Items[ E.Y ] := Nor;
-               Ns.Items[ E.Z ] := Nor;
+               _NorBuf[ E.X ] := Nor;
+               _NorBuf[ E.Y ] := Nor;
+               _NorBuf[ E.Z ] := Nor;
           end;
 
-          Es.Items[ I*3+0 ] := TCardinal2D.Create( E.X, E.Y );
-          Es.Items[ I*3+1 ] := TCardinal2D.Create( E.Y, E.Z );
-          Es.Items[ I*3+2 ] := TCardinal2D.Create( E.Z, E.X );
+          _EleBuf[ I*3+0 ] := TCardinal2D.Create( E.X, E.Y );
+          _EleBuf[ I*3+1 ] := TCardinal2D.Create( E.Y, E.Z );
+          _EleBuf[ I*3+2 ] := TCardinal2D.Create( E.Z, E.X );
 
           Inc( E.X, 3 );
           Inc( E.Y, 3 );
           Inc( E.Z, 3 );
      end;
-
-     _PosBuf.Unmap;
-     _NorBuf.Unmap;
-     _EleBuf.Unmap;
 
      CalcBouBox;
 end;
@@ -862,12 +754,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
           end;
      end;
 
@@ -877,12 +764,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
           end;
      end;
 
@@ -892,12 +774,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
           end;
      end;
 
@@ -913,13 +790,6 @@ end;
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLShaperFace.DrawMain;
-begin
-     _EleBuf.Draw;
-end;
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
 
@@ -939,6 +809,13 @@ end;
 
 /////////////////////////////////////////////////////////////////////// メソッド
 
+procedure TGLShaperFace.DrawMain;
+begin
+     _EleBuf.Draw;
+end;
+
+//------------------------------------------------------------------------------
+
 procedure TGLShaperFace.LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle3D>; const DivU_,DivV_:Integer );
 //··································
      function XYtoI( const X_,Y_:Integer ) :Integer;
@@ -948,13 +825,10 @@ procedure TGLShaperFace.LoadFromFunc( const Func_:TConstFunc<TdSingle2D,TdSingle
 //··································
 var
    X0, Y0, X1, Y1, I, I00, I01, I10, I11 :Integer;
-   Es :TGLBufferData<TCardinal3D>;
 begin
      inherited;
 
      _EleBuf.Count := 2 * DivV_ * DivU_;
-
-     Es := _EleBuf.Map( GL_WRITE_ONLY );
 
      I := 0;
      for Y0 := 0 to DivV_-1 do
@@ -973,12 +847,10 @@ begin
                //  │      │
                //  10───11
 
-               Es[ I ] := TCardinal3D.Create( I00, I10, I11 );  Inc( I );
-               Es[ I ] := TCardinal3D.Create( I11, I01, I00 );  Inc( I );
+               _EleBuf[ I ] := TCardinal3D.Create( I00, I10, I11 );  Inc( I );
+               _EleBuf[ I ] := TCardinal3D.Create( I11, I01, I00 );  Inc( I );
           end;
      end;
-
-     _EleBuf.Unmap;
 end;
 
 //------------------------------------------------------------------------------
@@ -996,8 +868,6 @@ var
                   _    :Word;
                 end;
    E :TCardinal3D;
-   Ps, Ns :TGLBufferData<TSingle3D>;
-   Es :TGLBufferData<TCardinal3D>;
 begin
      F := TFileStream.Create( FileName_, fmOpenRead );
      try
@@ -1016,10 +886,6 @@ begin
      _NorBuf.Count := 3 * FsN;
      _EleBuf.Count :=     FsN;
 
-     Ps := _PosBuf.Map( GL_WRITE_ONLY );
-     Ns := _NorBuf.Map( GL_WRITE_ONLY );
-     Es := _EleBuf.Map( GL_WRITE_ONLY );
-
      E.X := 0;
      E.Y := 1;
      E.Z := 2;
@@ -1027,25 +893,21 @@ begin
      begin
           with Fs[ I ] do
           begin
-               Ps.Items[ E.X ] := Pos1;
-               Ps.Items[ E.Y ] := Pos2;
-               Ps.Items[ E.Z ] := Pos3;
+               _PosBuf[ E.X ] := Pos1;
+               _PosBuf[ E.Y ] := Pos2;
+               _PosBuf[ E.Z ] := Pos3;
 
-               Ns.Items[ E.X ] := Nor;
-               Ns.Items[ E.Y ] := Nor;
-               Ns.Items[ E.Z ] := Nor;
+               _NorBuf[ E.X ] := Nor;
+               _NorBuf[ E.Y ] := Nor;
+               _NorBuf[ E.Z ] := Nor;
           end;
 
-          Es.Items[ I ] := E;
+          _EleBuf[ I ] := E;
 
           Inc( E.X, 3 );
           Inc( E.Y, 3 );
           Inc( E.Z, 3 );
      end;
-
-     _PosBuf.Unmap;
-     _NorBuf.Unmap;
-     _EleBuf.Unmap;
 
      CalcBouBox;
 end;
@@ -1178,12 +1040,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ps[ V.Key.P ];
           end;
      end;
 
@@ -1193,12 +1050,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ns[ V.Key.N ];
           end;
      end;
 
@@ -1208,12 +1060,7 @@ begin
           begin
                Count := Vs.Count;
 
-               with Map( GL_WRITE_ONLY ) do
-               begin
-                    for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
-               end;
-
-               Unmap;
+               for V in Vs do Items[ V.Value ] := Ts[ V.Key.T ];
           end;
      end;
 
@@ -1222,204 +1069,6 @@ begin
      _EleBuf.Import( Es );
 
      CalcBouBox;
-end;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperCopy
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// アクセス
-
-function TGLShaperCopy.GetShaper :TGLShaperPoin;
-begin
-     Result := _Shaper;
-end;
-
-procedure TGLShaperCopy.SetShaper( const Shaper_:TGLShaperPoin );
-begin
-     _Shaper := Shaper_;
-
-     CalcBouBox;
-end;
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLShaperCopy.BeginDraw;
-begin
-     inherited;
-
-     with _Shaper do
-     begin
-          if not Assigned( Self._Matery ) then Matery.Use;
-
-          PosBuf.Use( 0{BinP} );
-          NorBuf.Use( 1{BinP} );
-          TexBuf.Use( 2{BinP} );
-     end;
-end;
-
-procedure TGLShaperCopy.DrawMain;
-begin
-     _Shaper.DrawMain;
-end;
-
-procedure TGLShaperCopy.EndDraw;
-begin
-     with _Shaper do
-     begin
-          PosBuf.Unuse( 0{BinP} );
-          NorBuf.Unuse( 1{BinP} );
-          TexBuf.Unuse( 2{BinP} );
-
-          if not Assigned( Self._Matery ) then Matery.Use;
-     end;
-
-     inherited;
-end;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLShaperCopy.Create;
-begin
-     inherited;
-
-end;
-
-destructor TGLShaperCopy.Destroy;
-begin
-
-     inherited;
-end;
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLShaperCopy.CalcBouBox;
-begin
-     BouBox := _Shaper.BouBox;
-end;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TGLShaperLineCube
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& private
-
-/////////////////////////////////////////////////////////////////////// メソッド
-
-procedure TGLShaperLineCube.MakeModel;
-var
-   SX, SY, SZ :Single;
-begin
-     SX := _SizeX / 2;
-     SY := _SizeY / 2;
-     SZ := _SizeZ / 2;
-
-     _PosBuf[ 0 ] := TSingle3D.Create( -SX, -SY, -SZ );
-     _PosBuf[ 1 ] := TSingle3D.Create( +SX, -SY, -SZ );
-     _PosBuf[ 2 ] := TSingle3D.Create( -SX, +SY, -SZ );
-     _PosBuf[ 3 ] := TSingle3D.Create( +SX, +SY, -SZ );
-     _PosBuf[ 4 ] := TSingle3D.Create( -SX, -SY, +SZ );
-     _PosBuf[ 5 ] := TSingle3D.Create( +SX, -SY, +SZ );
-     _PosBuf[ 6 ] := TSingle3D.Create( -SX, +SY, +SZ );
-     _PosBuf[ 7 ] := TSingle3D.Create( +SX, +SY, +SZ );
-
-     CalcBouBox;
-end;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& protected
-
-/////////////////////////////////////////////////////////////////////// アクセス
-
-function TGLShaperLineCube.GetSizeX :Single;
-begin
-     Result := _SizeX;
-end;
-
-procedure TGLShaperLineCube.SetSizeX( const SizeX_:Single );
-begin
-     _SizeX := SizeX_;  MakeModel;
-end;
-
-function TGLShaperLineCube.GetSizeY :Single;
-begin
-     Result := _SizeY;
-end;
-
-procedure TGLShaperLineCube.SetSizeY( const SizeY_:Single );
-begin
-     _SizeY := SizeY_;  MakeModel;
-end;
-
-function TGLShaperLineCube.GetSizeZ :Single;
-begin
-     Result := _SizeZ;
-end;
-
-procedure TGLShaperLineCube.SetSizeZ( const SizeZ_:Single );
-begin
-     _SizeZ := SizeZ_;  MakeModel;
-end;
-
-//------------------------------------------------------------------------------
-
-function TGLShaperLineCube.GetColor :TAlphaColorF;
-begin
-     Result := TGLMateryColor( _Matery ).Color;
-end;
-
-procedure TGLShaperLineCube.SetColor( const Color_:TAlphaColorF );
-begin
-     TGLMateryColor( _Matery ).Color := Color_;
-end;
-
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& public
-
-constructor TGLShaperLineCube.Create;
-begin
-     inherited;
-
-     _PosBuf.Count :=  8;
-     _NorBuf.Count :=  8;
-     _EleBuf.Count := 12;
-
-     _Matery := TGLMateryColor.Create;
-
-     _NorBuf[ 0 ] := TSingle3D.Create( -1, -1, -1 ).Unitor;
-     _NorBuf[ 1 ] := TSingle3D.Create( +1, -1, -1 ).Unitor;
-     _NorBuf[ 2 ] := TSingle3D.Create( -1, +1, -1 ).Unitor;
-     _NorBuf[ 3 ] := TSingle3D.Create( +1, +1, -1 ).Unitor;
-     _NorBuf[ 4 ] := TSingle3D.Create( -1, -1, +1 ).Unitor;
-     _NorBuf[ 5 ] := TSingle3D.Create( +1, -1, +1 ).Unitor;
-     _NorBuf[ 6 ] := TSingle3D.Create( -1, +1, +1 ).Unitor;
-     _NorBuf[ 7 ] := TSingle3D.Create( +1, +1, +1 ).Unitor;
-
-     _EleBuf[ 00 ] := TCardinal2D.Create( 0, 1 );
-     _EleBuf[ 01 ] := TCardinal2D.Create( 0, 2 );
-     _EleBuf[ 02 ] := TCardinal2D.Create( 0, 4 );
-
-     _EleBuf[ 03 ] := TCardinal2D.Create( 1, 3 );
-     _EleBuf[ 04 ] := TCardinal2D.Create( 2, 6 );
-     _EleBuf[ 05 ] := TCardinal2D.Create( 4, 5 );
-
-     _EleBuf[ 06 ] := TCardinal2D.Create( 7, 6 );
-     _EleBuf[ 07 ] := TCardinal2D.Create( 7, 5 );
-     _EleBuf[ 08 ] := TCardinal2D.Create( 7, 3 );
-
-     _EleBuf[ 09 ] := TCardinal2D.Create( 6, 4 );
-     _EleBuf[ 10 ] := TCardinal2D.Create( 5, 1 );
-     _EleBuf[ 11 ] := TCardinal2D.Create( 3, 2 );
-
-     _SizeX := 1;
-     _SizeY := 1;
-     _SizeZ := 1;
-
-     MakeModel;
-end;
-
-destructor TGLShaperLineCube.Destroy;
-begin
-
-     inherited;
 end;
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【ルーチン】

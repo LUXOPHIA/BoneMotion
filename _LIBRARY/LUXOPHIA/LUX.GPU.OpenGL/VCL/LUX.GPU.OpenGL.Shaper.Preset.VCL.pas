@@ -1,18 +1,19 @@
-﻿unit LUX.GPU.OpenGL.Shaper.VCL;
+﻿unit LUX.GPU.OpenGL.Shaper.Preset.VCL;
 
 interface //#################################################################### ■
 
 uses System.UITypes, System.Classes,
      Winapi.OpenGL, Winapi.OpenGLext,
      Vcl.Graphics,
-     LUX, LUX.D2, LUX.D3, LUX.M4, LUX.Tree,
+     LUX, LUX.D2, LUX.D3, LUX.M4,
      LUX.GPU.OpenGL,
      LUX.GPU.OpenGL.Atom.Buffer,
      LUX.GPU.OpenGL.Atom.Buffer.Verter,
      LUX.GPU.OpenGL.Atom.Buffer.Elemer,
      LUX.GPU.OpenGL.Scener,
      LUX.GPU.OpenGL.Matery,
-     LUX.GPU.OpenGL.Matery.VCL,
+     LUX.GPU.OpenGL.Matery.Imager.Preset,
+     LUX.GPU.OpenGL.Matery.Preset,
      LUX.GPU.OpenGL.Shaper;
 
 type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【型】
