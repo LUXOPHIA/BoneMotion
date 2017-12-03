@@ -5,7 +5,7 @@ interface //####################################################################
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  LUX, LUX.D1, LUX.D2, LUX.D3, LUX.M4,
+  LUX, LUX.D1, LUX.D2, LUX.D3, LUX.M4,
   LUX.GPU.OpenGL.Viewer,
   LUX.GPU.OpenGL.Camera,
   LUX.GPU.OpenGL.Scener,
