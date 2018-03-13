@@ -7,7 +7,8 @@ uses System.Generics.Collections,
      LUX.Motion.BVH,
      LUX.GPU.OpenGL,
      LUX.GPU.OpenGL.Scener,
-     LUX.GPU.OpenGL.Shaper;
+     LUX.GPU.OpenGL.Shaper,
+     LUX.GPU.OpenGL.Shaper.Preset;
 
 type //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$【型】
 
